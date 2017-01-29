@@ -35,7 +35,7 @@ Numeric variables with css unit will be parsed as two different properties: With
 
 ## Installation
 
-`npm install --save-dev @andys8/sass-variable-loader`
+`npm install --save-dev sass-variable-loader`
 
 ## Usage
 

@@ -1,6 +1,6 @@
 {
-  "name": "@andys8/sass-variable-loader",
-  "version": "0.0.5",
+  "name": "sass-variable-loader",
+  "version": "0.0.6",
   "description": "Sass variable loader module for webpack",
   "main": "dist/index.js",
   "scripts": {
