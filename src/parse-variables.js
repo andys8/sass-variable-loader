@@ -1,5 +1,11 @@
 import sass from 'node-sass';
+import capitalize from 'lodash.capitalize';
 import camelCase from 'lodash.camelcase';
+
+const IGNORED_PROPS = ['inspect', 'nodeType'];
+const CSS_UNITS = ['cm', 'em', 'ex', 'in', 'mm', 'pc', 'pt', 'px', 'vh', 'vw', 'vmin'];
+const REGEX_SASS_VARIABLE = /\.(.+) { value: (.+); }/;
+const REGEX_UNIT_NUMBER = /(\d*\.?\d*)(.*)/;
 
 function constructSassString(variables) {
   const asVariables = variables
@@ -12,7 +18,7 @@ function constructSassString(variables) {
   return `${asVariables}\n${asClasses}`;
 }
 
-export default function parseVariables(variables, opts = {}) {
+export default function parseVariables(variables) {
   const result = sass.renderSync({
     data: constructSassString(variables),
     outputStyle: 'compact',
@@ -21,15 +27,20 @@ export default function parseVariables(variables, opts = {}) {
   const parsedVariables = result.split(/\n/)
     .filter(line => line && line.length)
     .map(variable => {
-      const [, name, value] = /\.(.+) { value: (.+); }/.exec(variable);
+      const [, name, value] = REGEX_SASS_VARIABLE.exec(variable);
       const obj = {};
+      const propName = camelCase(name);
+      const [, parsedValue, unit] = value.match(REGEX_UNIT_NUMBER);
 
-      if (opts.preserveVariableNames) {
-        obj[name] = value;
+      // case where variable numeric with css unit
+      if (CSS_UNITS.includes(unit)) {
+        obj[`${propName}${capitalize(unit)}`] = value;
+        obj[propName] = parseFloat(parsedValue);
         return obj;
       }
 
-      obj[camelCase(name)] = value;
+      // case where variable is anything else
+      obj[propName] = isNaN(value) ? value : parseFloat(value);
       return obj;
     });
 
@@ -38,7 +49,7 @@ export default function parseVariables(variables, opts = {}) {
   // creating proxy to throw errors when property is missing
   const proxyObj = new Proxy(obj, {
     get: (proxy, name) => {
-      if (typeof name === 'string' && obj[name] == null) {
+      if (typeof name === 'string' && !IGNORED_PROPS.includes(name) && obj[name] == null) {
         throw new ReferenceError(`Getting non-existant sass variable '${name}'`);
       }
       return obj[name];

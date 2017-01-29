@@ -29,8 +29,8 @@
   },
   "homepage": "https://github.com/nordnet/sass-variable-loader/#readme",
   "dependencies": {
-    "loader-utils": "^0.2.12",
     "lodash.camelcase": "^4.1.1",
+    "lodash.capitalize": "^4.2.1", 
     "node-sass": "^3.4.2",
     "strip-json-comments": "^2.0.1"
   },
