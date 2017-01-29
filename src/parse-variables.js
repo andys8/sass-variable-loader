@@ -33,5 +33,17 @@ export default function parseVariables(variables, opts = {}) {
       return obj;
     });
 
-  return Object.assign.apply(this, parsedVariables);
+  const obj = Object.assign.apply(this, parsedVariables);
+
+  // creating proxy to throw errors when property is missing
+  const proxyObj = new Proxy(obj, {
+    get: (proxy, name) => {
+      if (typeof name === 'string' && obj[name] == null) {
+        throw new ReferenceError(`Getting non-existant sass variable '${name}'`);
+      }
+      return obj[name];
+    },
+  });
+
+  return proxyObj;
 }

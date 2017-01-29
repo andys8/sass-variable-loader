@@ -18,7 +18,12 @@ context('without comments', function() {
         const result = parseVariables(variables);
         expect(result).to.be.a('object');
         expect(result).to.include.keys('grayBase');
+        expect(result.grayBase).to.equal('#000');
       });
+      it('should throw an error for undefined keys', function() {
+        const result = parseVariables(variables);
+        expect(() => result.notExistingProp).to.throw(ReferenceError);
+      });  
     });
 
     describe('parseVariables({ preserveVariableNames: true })', function() {
