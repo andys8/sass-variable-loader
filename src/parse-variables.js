@@ -18,7 +18,7 @@ function constructSassString(variables) {
   return `${asVariables}\n${asClasses}`;
 }
 
-export default function parseVariables(variables) {
+export default function parseVariables(variables, environment) {
   const result = sass.renderSync({
     data: constructSassString(variables),
     outputStyle: 'compact',
@@ -46,15 +46,17 @@ export default function parseVariables(variables) {
 
   const obj = Object.assign.apply(this, parsedVariables);
 
-  // creating proxy to throw errors when property is missing
-  const proxyObj = new Proxy(obj, {
-    get: (proxy, name) => {
-      if (typeof name === 'string' && !IGNORED_PROPS.includes(name) && obj[name] == null) {
-        throw new ReferenceError(`Getting non-existant sass variable '${name}'`);
-      }
-      return obj[name];
-    },
-  });
+  // creating proxy to throw errors when property is missing in develop and testing environment
+  if (environment && environment !== 'production') {
+    return new Proxy(obj, {
+      get: (proxy, name) => {
+        if (typeof name === 'string' && !IGNORED_PROPS.includes(name) && obj[name] == null) {
+          throw new ReferenceError(`Getting non-existant sass variable '${name}'`);
+        }
+        return obj[name];
+      },
+    });
+  }
 
-  return proxyObj;
+  return obj;
 }

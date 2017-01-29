@@ -21,9 +21,16 @@ context('without comments', () => {
       expect(result.grayBase).to.equal('#000');
     });
 
-    it('should throw an error for undefined keys', () => {
-      const result = parseVariables(variables);
-      expect(() => result.notExistingProp).to.throw(ReferenceError);
+    it('should throw an error for undefined keys in DEV environment', () => {
+      expect(() => parseVariables(variables, 'develop').notExistingProp).to.throw(ReferenceError);
+    });
+
+    it('should throw an error for undefined keys in PROD environment', () => {
+      expect(() => parseVariables(variables, 'production').notExistingProp).to.not.throw(ReferenceError);
+    });
+
+    it('should throw an error for undefined keys in unknown environment', () => {
+      expect(() => parseVariables(variables).notExistingProp).to.not.throw(ReferenceError);
     });
   });
 });
