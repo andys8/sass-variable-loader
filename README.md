@@ -4,6 +4,7 @@
 >
 > That means full support for Sass' lighten, darken, mix etc.
 
+
 **Input:**
 ``` scss
 $gray-base: #000 !default;
@@ -12,6 +13,7 @@ $gray-dark: lighten($gray-base, 20%) !default; // #333
 $gray: lighten($gray-base, 33.5%) !default; // #555
 $gray-light: lighten($gray-base, 46.7%) !default; // #777
 $gray-lighter: lighten($gray-base, 93.5%) !default; // #eee
+$width: 100px;
 ```
 
 **Result:**
@@ -22,13 +24,19 @@ $gray-lighter: lighten($gray-base, 93.5%) !default; // #eee
   grayDark: '#333333',
   gray: '#555555',
   grayLight: '#777777',
-  grayLighter: '#eeeeee'
+  grayLighter: '#eeeeee',
+  width: 100,
+  widthPx: '100px'
 }
 ```
 
+## Differences of this fork
+*  Numeric variables with css unit will be parsed as two different properties: With unit as string and without as float.
+* If `NODE_ENV` is set and isn't `production` an error will be thrown when an undefined property is accessed.
+
 ## Installation
 
-`npm install --save-dev sass-variable-loader`
+`npm install --save-dev @andys8/sass-variable-loader`
 
 ## Usage
 
@@ -38,16 +46,9 @@ import variables from 'sass-variable-loader!./_variables.scss';
 ```
 **Note:** If you've already defined loaders for Sass files in the configuration, you can override the [loader order](https://webpack.github.io/docs/loaders.html#loader-order) by writing `!!sass-variable-loader!./_variables.scss` to disable all loaders specified in the configuration for that module request.
 
-## Options
+## Credits
+Credits to [GU5TAF](https://github.com/GU5TAF) who implemented the [sass-variable-loader](https://github.com/nordnet/sass-variable-loader)
 
-You can pass options to the loader via [query parameters](http://webpack.github.io/docs/using-loaders.html#query-parameters).
-
-### preserveVariableNames
-
-``` javascript
-import variables from 'sass-variable-loader?preserveVariableNames!./_variables.scss';
-// => returns all the variables in _variables.scss as an object with each variable name left intact
-```
 
 ## License
 
