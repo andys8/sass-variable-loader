@@ -2,7 +2,6 @@ import sass from 'node-sass';
 import capitalize from 'lodash.capitalize';
 import camelCase from 'lodash.camelcase';
 
-const IGNORED_PROPS = ['inspect', 'nodeType'];
 const CSS_UNITS = ['cm', 'em', 'ex', 'in', 'mm', 'pc', 'pt', 'px', 'vh', 'vw', 'vmin'];
 const REGEX_SASS_VARIABLE = /\.(.+) { value: (.+); }/;
 const REGEX_UNIT_NUMBER = /(\d*\.?\d*)(.*)/;
@@ -18,7 +17,7 @@ function constructSassString(variables) {
   return `${asVariables}\n${asClasses}`;
 }
 
-export default function parseVariables(variables, environment) {
+export default function parseVariables(variables) {
   const result = sass.renderSync({
     data: constructSassString(variables),
     outputStyle: 'compact',
@@ -44,19 +43,5 @@ export default function parseVariables(variables, environment) {
       return obj;
     });
 
-  const obj = Object.assign.apply(this, parsedVariables);
-
-  // creating proxy to throw errors when property is missing in develop and testing environment
-  if (environment && environment !== 'production') {
-    return new Proxy(obj, {
-      get: (proxy, name) => {
-        if (typeof name === 'string' && !IGNORED_PROPS.includes(name) && obj[name] == null) {
-          throw new ReferenceError(`Getting non-existant sass variable '${name}'`);
-        }
-        return obj[name];
-      },
-    });
-  }
-
-  return obj;
+  return Object.assign.apply(this, parsedVariables);
 }

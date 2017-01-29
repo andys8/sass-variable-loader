@@ -31,8 +31,7 @@ $width: 100px;
 ```
 
 ## Differences of this fork
-*  Numeric variables with css unit will be parsed as two different properties: With unit as string and without as float.
-* If `NODE_ENV` is set and isn't `production` an error will be thrown when an undefined property is accessed.
+Numeric variables with css unit will be parsed as two different properties: With unit as string and without as float.
 
 ## Installation
 
